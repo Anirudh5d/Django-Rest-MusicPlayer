@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2 class="mt-4">Favorites</h2>
+        <ul class="list-group">
+            {% for favorite in favorites %}
+                <li class="list-group-item">
+                    {{ favorite.song.name }} - {{ favorite.song.artist.username }}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

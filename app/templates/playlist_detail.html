@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2 class="mt-4">{{ playlist.name }}</h2>
+        <ul class="list-group">
+            {% for song in playlist.songs.all %}
+                <li class="list-group-item">
+                    {{ song.name }} - {{ song.artist.username }}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}
