@@ -1,11 +1,25 @@
 body {
-    background-color: #8bbcec;
+    background-color: #f8f9fa;
 }
 
-.form-group {
-    margin-bottom: 1.5rem;
+.navbar-brand {
+    font-weight: bold;
 }
 
-.btn {
-    width: 100%;
+.list-group-item a {
+    text-decoration: none;
+    color: #000;
 }
+
+.list-group-item a:hover {
+    text-decoration: underline;
+}
+
+.current-song {
+    margin-top: 20px;
+}
+.list-group-item {
+    color: black; 
+    background-color: rgb(253, 10, 10);
+}
+

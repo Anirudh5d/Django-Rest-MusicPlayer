@@ -3,10 +3,16 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser, ArtistProfile, Song, Playlist
 
 class CustomUserCreationForm(UserCreationForm):
+    is_artist = forms.BooleanField(required=False, label="Register as Artist")
+
     class Meta:
         model = CustomUser
-        fields = ('username', 'is_artist', 'password1', 'password2')
+        fields = ('username', 'email', 'password1', 'password2', 'is_artist')
 
+class SongUploadForm(forms.ModelForm):
+    class Meta:
+        model = Song
+        fields = ['title', 'genre', 'year', 'file']
 class ArtistProfileForm(forms.ModelForm):
     class Meta:
         model = ArtistProfile
@@ -15,7 +21,7 @@ class ArtistProfileForm(forms.ModelForm):
 class SongForm(forms.ModelForm):
     class Meta:
         model = Song
-        fields = ['name', 'genre', 'year_of_release', 'file']
+        fields = ['title', 'genre', 'year', 'file']
 
 class PlaylistForm(forms.ModelForm):
     class Meta:

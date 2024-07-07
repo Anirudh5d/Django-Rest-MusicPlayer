@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h3>My Playlists</h3>
+        <ul class="list-group">
+            {% for playlist in playlists %}
+                <li class="list-group-item">
+                    <a href="{% url 'playlist_detail' playlist.id %}">{{ playlist.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

@@ -1,10 +1,130 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="jumbotron mt-4">
-    <h1 class="display-4">Welcome to Music Store</h1>
-    <p class="lead">Discover and play your favorite music.</p>
-    <hr class="my-4">
-    <p>Create playlists, mark favorites, and enjoy music from various artists.</p>
+<div class="row">
+    <div class="col-md-3" style="width: 25%;">
+        <h3>Songs</h3>
+        <ul class="list-group">
+            {% for song in songs %}
+                <li class="list-group-item">
+                    <a href="#" class="song-item" data-song-url="{{ song.file.url }}" data-song-id="{{ song.id }}">{{ song.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+        {% if user.is_artist %}
+            <a href="{% url 'upload_song' %}" class="btn btn-primary mt-3">Upload New Song</a>
+        {% endif %}
+    </div>
+    <div class="col-md-9" style="width: 75%;">
+        {% if search_results %}
+            <h2>Search Results for "{{ query }}":</h2>
+            <ul>
+                {% for song in search_results %}
+                    <li>{{ song.name }} by {{ song.artist.name }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <h2>Welcome to the Music Player!</h2>
+        {% endif %}
+    </div>
 </div>
+<div class="row">
+    <div class="col-3">
+        <ul class="list-group">
+            {% for song in songs %}
+                <li class="list-group-item">
+                    {{ song.name }}
+                    {% if user.is_artist and song.artist == user %}
+                        <a href="{% url 'delete_song' song.id %}" class="btn btn-danger btn-sm float-end">Delete</a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col-9">
+        <h2>Current Song</h2>
+        <div id="player-controls">
+            <button class="btn btn-primary">Play</button>
+            <button class="btn btn-secondary">Pause</button>
+            <button class="btn btn-info">Next</button>
+            <button class="btn btn-warning">Previous</button>
+            <button class="btn btn-success">Add to Favorite</button>
+            <button class="btn btn-dark">Add to Playlist</button>
+            <input type="range" min="0" max="100" value="0">
+        </div>
+    </div>
+</div>
+<div class="col-md-9">
+    <div class="search-bar mb-3">
+        <form method="GET" action="{% url 'search_songs' %}">
+            <input type="text" name="q" class="form-control" placeholder="Search songs...">
+        </form>
+    </div>
+    <div class="current-song">
+        <audio id="audio-player" controls>
+            <source src="" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        <div class="song-controls mt-3">
+            <button id="prev-song" class="btn btn-primary">Previous</button>
+            <button id="play-pause" class="btn btn-primary">Play/Pause</button>
+            <button id="next-song" class="btn btn-primary">Next</button>
+            <button id="add-to-favorites" class="btn btn-secondary">Add to Favorites</button>
+            <button id="add-to-playlist" class="btn btn-secondary">Add to Playlist</button>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var audioPlayer = document.getElementById('audio-player');
+        var currentSongIndex = 0;
+        var songs = document.querySelectorAll('.song-item');
+
+        songs.forEach(function (song, index) {
+            song.addEventListener('click', function (e) {
+                e.preventDefault();
+                var songUrl = song.getAttribute('data-song-url');
+                audioPlayer.src = songUrl;
+                audioPlayer.play();
+                currentSongIndex = index;
+            });
+        });
+
+        document.getElementById('prev-song').addEventListener('click', function () {
+            if (currentSongIndex > 0) {
+                currentSongIndex--;
+                var prevSongUrl = songs[currentSongIndex].getAttribute('data-song-url');
+                audioPlayer.src = prevSongUrl;
+                audioPlayer.play();
+            }
+        });
+
+        document.getElementById('next-song').addEventListener('click', function () {
+            if (currentSongIndex < songs.length - 1) {
+                currentSongIndex++;
+                var nextSongUrl = songs[currentSongIndex].getAttribute('data-song-url');
+                audioPlayer.src = nextSongUrl;
+                audioPlayer.play();
+            }
+        });
+
+        document.getElementById('play-pause').addEventListener('click', function () {
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+            } else {
+                audioPlayer.pause();
+            }
+        });
+
+        document.getElementById('add-to-favorites').addEventListener('click', function () {
+            var songId = songs[currentSongIndex].getAttribute('data-song-id');
+            fetch(`/add_to_favorites/${songId}/`, { method: 'POST' });
+        });
+
+        document.getElementById('add-to-playlist').addEventListener('click', function () {
+            var songId = songs[currentSongIndex].getAttribute('data-song-id');
+            fetch(`/add_to_playlist/${songId}/`, { method: 'POST' });
+        });
+    });
+</script>
 {% endblock %}
