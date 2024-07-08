@@ -31,5 +31,5 @@ urlpatterns = [
     path('favorites/', favorites, name='favorites'),
     path('search/', search_songs, name='search_songs'),
     path('api/', include(router.urls)),
-     path('delete_song/<int:song_id>/', delete_song, name='delete_song'),
+    path('delete_song/<int:song_id>/', delete_song, name='delete_song'),
 ]
